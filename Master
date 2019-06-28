@@ -46,7 +46,6 @@ class ViewController: UIViewController {
         let message = "Your score is \(points) points"
         
         let alert = UIAlertController(title: title, message : message, preferredStyle: .alert)
-        self.present(alert, animated: true, completion: nil)
         
         let action = UIAlertAction(title: "Next Round", style: .default, handler: {
             action in
