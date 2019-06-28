@@ -1,0 +1,112 @@
+import UIKit
+
+class ViewController: UIViewController {
+    
+    var currentValue = 0
+    var targetValue = 0
+    var score = 0
+    var round = 0
+    
+    @IBOutlet weak var slider: UISlider!
+    @IBOutlet weak var targetLabel: UILabel!
+    @IBOutlet weak var scoreLabel: UILabel!
+    @IBOutlet weak var roundLabel: UILabel!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let roundedValue = slider.value.rounded()
+        currentValue = Int(roundedValue)
+        startnewGame()
+        
+        // Do any additional setup after loading the view.
+    }
+    
+    @IBAction func showAlert() {
+        
+        let difference = abs(targetValue - currentValue)
+        var points = 100 - difference
+        
+        let title: String
+        if difference == 0 {
+            title = "Perfect!"
+            points += 100
+        } else if difference < 5 {
+            title = "You almost had it!"
+            if difference == 1 {
+                points += 50
+            }
+        } else if difference < 10 {
+            title = "You did pretty good!"
+        } else {
+            title = "Better luck next time!"
+        }
+        
+        score += points
+        
+        let message = "Your score is \(points) points"
+        
+        let alert = UIAlertController(title: title, message : message, preferredStyle: .alert)
+        self.present(alert, animated: true, completion: nil)
+        
+        let action = UIAlertAction(title: "Next Round", style: .default, handler: {
+            action in
+            self.startNewRound()
+        })
+        
+        alert.addAction(action)
+        
+        present(alert, animated: true, completion: nil)
+        
+    }
+    
+    @IBAction func showInfo() {
+        
+        let info = UIAlertController(title: "Information", message: "Drag the slider as close to the number as possible. The closer you are the more points you'll receive!" , preferredStyle: .actionSheet)
+        
+        let action = UIAlertAction(title: "Next Round", style: .default, handler: { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.startNewRound()
+            }
+        })
+        
+        //Leo said to do this because `So when you put code in a block (like in the handler for your action), it will run on a background thread, whereas user interaction always takes place on the main thread. Updating the UI from a background thread could cause a lot of wonky behaviour, so it just causes the app to crash to avoid it`
+        
+        info.addAction(action)
+        
+        present(info, animated: true, completion: nil)
+        
+        
+    }
+    
+    @IBAction func sliderMove( _ slider: UISlider) {
+        let roundedValue = slider.value.rounded()
+        currentValue = Int(roundedValue)
+        
+    }
+    
+    func startNewRound() {
+        targetValue = Int.random(in: 1...100)
+        currentValue = 50
+        slider.value = Float(currentValue)
+        round += 1
+        updateLabels()
+        
+    }
+    
+    func updateLabels() {
+        targetLabel.text = String(targetValue)
+        scoreLabel.text = String(score)
+        roundLabel.text = String(round)
+        
+    }
+    
+    @IBAction func startnewGame() {
+        score = 0
+        round = 0
+        startNewRound()
+    }
+    
+    
+    
+}
+
